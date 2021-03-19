@@ -10,5 +10,7 @@ def load_data(city, month, day):
         df - Pandas DataFrame containing city data filtered by month and day
     """
 
-
+    print("hiii")
     return df
+
+load_data("chicago","jan","tue")
