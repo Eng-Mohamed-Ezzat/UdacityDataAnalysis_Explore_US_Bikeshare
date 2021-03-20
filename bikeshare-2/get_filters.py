@@ -35,7 +35,7 @@ def get_filters():
         "[2]: New York\n" \
         "[3]: Washington\n" \
         "Please type city name or number:"
-        usrcity = "all" #input(msg)
+        usrcity = "1" #input(msg)
 
         if usrcity.isnumeric() and int(usrcity) in range(len(DATA_CITY)) or usrcity.title() in DATA_CITY.keys():
             city = list(DATA_CITY.keys())[int(usrcity)] if usrcity.isnumeric() else usrcity.title() 
@@ -55,7 +55,7 @@ def get_filters():
         "[0]: All\n" \
         "[?]: Month Number\n" \
         "Please type month name or number:"
-        usrmonth = "all" #input(msg)
+        usrmonth = "1" #input(msg)
 
         if usrmonth.isnumeric() and int(usrmonth) in range(len(DATA_Month)) or usrmonth[:3].title() in DATA_Month.values():
             month = list(DATA_Month.values())[int(usrmonth)] if usrmonth.isnumeric() else usrmonth[:3].title() 
@@ -75,7 +75,7 @@ def get_filters():
         "[0]: All\n" \
         "[?]: Day Name\n" \
         "Please type week day name or number:"
-        usrday = "0" #input(msg)
+        usrday = "1" #input(msg)
 
         if usrday.isnumeric() and int(usrday) in range(len(DATA_Day)) or usrday[:3].title() in DATA_Day:
             day = DATA_Day[int(usrday)] if usrday.isnumeric() else usrday[:3].title() 
@@ -94,4 +94,4 @@ def get_filters():
     return city, month, day
 
 
-print(get_filters())
+print(type(get_filters()))

@@ -16,7 +16,6 @@ DATA_Month = {
 
 DATA_Day = ['All'] + [d[0:3] for d in cl.day_name]
 
-
 def load_data(city, month, day):
     """
     Loads data for the specified city and filters by month and day if applicable.
@@ -44,6 +43,32 @@ def load_data(city, month, day):
     
     return df
 
-get_filters = ('Chicago', 'All', 'Sat')
+def time_stats(df):
+    """Displays statistics on the most frequent times of travel."""
 
-load_data(*get_filters)
+    print('\nCalculating The Most Frequent Times of Travel...\n')
+    start_time = time.time()
+
+    # display the most common month
+    print("The most common month is {}.".format(df['Month'].mode()[0]))
+
+    # display the most common day of week
+    print("The most common day of week is {}.".format(df['Day'].mode()[0]))
+
+    # display the most common start hour
+    print("The most common start hour is {}.".format(df['Start Hour'].mode()[0]))
+
+
+    print("\nThis took %s seconds." % (time.time() - start_time))
+    print('-'*40)
+
+
+
+
+get_filters = ('Chicago', 'All', 'Sat')
+df=load_data(*get_filters)
+print()
+print("____________________________________________________")
+print()
+
+time_stats(df)
