@@ -38,6 +38,7 @@ def load_data(city, month, day):
     print(".",end="")
     df['Start Hour'] = df['Start Time'].dt.hour
     print(".",end="")
+    df['Trip from to'] = df['Start Station'] +" -> " + df['End Station']
     # Load Special
     df = df[(df.Day == (df.Day if day.lower()== 'all' else day)) & (df.Month == (df.Month if month.lower()=="all" else month))]    
     print(".")
@@ -45,26 +46,23 @@ def load_data(city, month, day):
     return df
 
 
-def time_stats(df):
-    """Displays statistics on the most frequent times of travel."""
+def station_stats(df):
+    """Displays statistics on the most popular stations and trip."""
 
-    print('\nCalculating The Most Frequent Times of Travel...\n')
+    print('\nCalculating The Most Popular Stations and Trip...\n')
     start_time = time.time()
 
-    # display the most common month
-    print("The most common month is {}.".format(df['Month'].mode()[0]))
+    # display most commonly used start station
+    print("The most commonly used start station: {}.".format(df['Start Station'].mode()[0]))
 
-    # display the most common day of week
-    print("The most common day of week is {}.".format(df['Day'].mode()[0]))
+    # display most commonly used end station
+    print("The most commonly used end station: {}.".format(df['End Station'].mode()[0]))
 
-    # display the most common start hour
-    print("The most common start hour is {}.".format(df['Start Hour'].mode()[0]))
-
+    # display most frequent combination of start station and end station trip
+    print("The most frequent combination of start station and end station trip:\n{}.".format(df['Trip from to'].mode()[0]))
 
     print("\nThis took %s seconds." % (time.time() - start_time))
     print('-'*40)
-
-
 
 
 get_filters = ('new york', 'All', 'Sat')
@@ -73,4 +71,4 @@ print()
 print("____________________________________________________")
 print()
 
-time_stats(df)
+station_stats(df)

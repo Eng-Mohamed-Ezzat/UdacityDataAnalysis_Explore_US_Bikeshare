@@ -90,6 +90,8 @@ def get_filters():
     return city, month, day
 
 
+
+
 def load_data(city, month, day):
     """
     Loads data for the specified city and filters by month and day if applicable.
@@ -109,9 +111,12 @@ def load_data(city, month, day):
     print(".",end="")
     df['Day'] = [d[0:3] for d in df['Start Time'].dt.day_name()]
     print(".",end="")
+    df['Start Hour'] = df['Start Time'].dt.hour
+    print(".",end="")
+    df['Trip from to'] = df['Start Station'] +" -> " + df['End Station']
     # Load Special
     df = df[(df.Day == (df.Day if day.lower()== 'all' else day)) & (df.Month == (df.Month if month.lower()=="all" else month))]    
-    print(".",end="")
+    print(".")
     
     return df
 
@@ -143,13 +148,13 @@ def station_stats(df):
     start_time = time.time()
 
     # display most commonly used start station
-
+    print("The most commonly used start station: {}.".format(df['Start Station'].mode()[0]))
 
     # display most commonly used end station
-
+    print("The most commonly used end station: {}.".format(df['End Station'].mode()[0]))
 
     # display most frequent combination of start station and end station trip
-
+    print("The most frequent combination of start station and end station trip:\n{}.".format(df['Trip from to'].mode()[0]))
 
     print("\nThis took %s seconds." % (time.time() - start_time))
     print('-'*40)
@@ -194,12 +199,12 @@ def main():
     while True:
         city, month, day = get_filters()
         df = load_data(city, month, day)
-
-
-        break
         time_stats(df)
+
         station_stats(df)
+
         trip_duration_stats(df)
+
         user_stats(df)
 
         restart = input('\nWould you like to restart? Enter yes or no.\n')
