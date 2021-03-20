@@ -4,8 +4,9 @@ import numpy as np
 import calendar as cl
 import os
 
-DATA_CITY = { 'Chicago': 'chicago.csv',
-              'New york': 'new_york_city.csv',
+DATA_CITY = { 
+              'Chicago': 'chicago.csv',
+              'New York': 'new_york_city.csv',
               'Washington': 'washington.csv'}
 
 DATA_Month = ('January', 'February', 'March', 'April', 'May', 'June')
@@ -223,7 +224,14 @@ def user_stats(df):
     print("\nThis took %s seconds." % (time.time() - start_time))
     print('-'*40)
 
-
+def view_rows(df):
+    view_data = input("Would you like to view 5 rows of individual trip data? Enter yes or no?")
+    start_loc = 0
+    while (view_data[0].lower()!='n'):
+        print(df.iloc[start_loc:start_loc+5])
+        start_loc += 5
+        view_data = input("Do you wish to continue?: ").lower()
+        
 def main():
     while True:
         
@@ -238,6 +246,8 @@ def main():
 
         user_stats(df)
 
+        view_rows(df)
+        
         restart = input('\nWould you like to restart? Enter yes or no.\n')
         if restart[0].lower() != 'y':
             break
