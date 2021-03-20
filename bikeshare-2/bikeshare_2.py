@@ -105,6 +105,8 @@ def load_data(city, month, day):
     """
     # Read data from csv file that represent the city 
     print("Loading {} city database to view {} month(s) and {} day(s).".format(city,month.lower(),day),end="")
+
+    
     df = pd.read_csv("{}\\bikeshare-2\\{}".format(os.getcwd(),DATA_CITY['Chicago']),parse_dates=['Start Time','End Time'])
     print(".",end="")
     df['Month'] = [m[0:3] for m in df['Start Time'].dt.month_name()]
@@ -114,6 +116,8 @@ def load_data(city, month, day):
     df['Start Hour'] = df['Start Time'].dt.hour
     print(".",end="")
     df['Trip from to'] = df['Start Station'] +" -> " + df['End Station']
+
+
     # Load Special
     df = df[(df.Day == (df.Day if day.lower()== 'all' else day)) & (df.Month == (df.Month if month.lower()=="all" else month))]    
     print(".")
@@ -167,10 +171,11 @@ def trip_duration_stats(df):
     start_time = time.time()
 
     # display total travel time
+    print("The total travel time: {}.".format(df['Trip Duration'].sum()))
 
 
     # display mean travel time
-
+    print("The mean travel time: {}.".format(df['Trip Duration'].mean()))
 
     print("\nThis took %s seconds." % (time.time() - start_time))
     print('-'*40)
@@ -183,13 +188,37 @@ def user_stats(df):
     start_time = time.time()
 
     # Display counts of user types
-
+    if "User Type" in df:
+        myGroups = df.groupby(['User Type'])['User Type'].groups
+        msg=""
+        for k in myGroups:
+            msg += "{}\t:{}\n".format(k,len(myGroups[k]))
+        
+        print("The counts of user types:\n{}".format(msg))
+    else:
+        print("The User Type Column not exist in the csv file.")
 
     # Display counts of gender
-
+    if "Gender" in df:
+        myGroups = df.groupby(['Gender'])['Gender'].groups
+        msg=""
+        for k in myGroups:
+            msg += "{}\t:{}\n".format(k,len(myGroups[k]))
+        
+        print("The counts of gender:\n{}".format(msg))
+    else:
+        print("The Gender Column not exist in the csv file.")
+    
 
     # Display earliest, most recent, and most common year of birth
-
+  
+    if "Birth Year" in df:
+        earliest = int(df['Birth Year'].max())
+        recent = int(df.loc[df.index[-1], 'Birth Year'])
+        common = int(df['Birth Year'].mode()[0])
+        print("The earliest is {}, most recent is {}, and most common year of birth is {}.".format(earliest,recent,common))
+    else:
+        print("The Birth Year Column not exist in the csv file.")
 
     print("\nThis took %s seconds." % (time.time() - start_time))
     print('-'*40)
@@ -197,16 +226,18 @@ def user_stats(df):
 
 def main():
     while True:
-        city, month, day = get_filters()
-        df = load_data(city, month, day)
+        # city, month, day = get_filters()
+        # df = load_data(city, month, day)
+        print("==================================================")
+        df=load_data('Chicago', 'May', 'Fri')
         time_stats(df)
 
         station_stats(df)
-
+        
         trip_duration_stats(df)
 
         user_stats(df)
-
+        break
         restart = input('\nWould you like to restart? Enter yes or no.\n')
         if restart.lower() != 'yes':
             break
