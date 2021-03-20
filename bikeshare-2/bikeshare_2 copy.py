@@ -4,13 +4,18 @@ import numpy as np
 import calendar as cl
 import os
 
-DATA_CITY = { 'Chicago': 'chicago.csv',
+DATA_CITY = { 
+              'Chicago': 'chicago.csv',
               'New york': 'new_york_city.csv',
-              'Washington': 'washington.csv'}
+              'Washington': 'washington.csv' }
 
-DATA_Month = ('January', 'February', 'March', 'April', 'May', 'June')
-
-DATA_Day = list(cl.day_name)
+# DATA_Month = {
+#     0: 'All', 
+#     1:'Jan', 2:'Feb', 3:'Mar', 4:'Apr', 5:'May', 6:'Jun',
+#     7:'Jul', 8:'Aug', 9:'Sep', 10:'Oct', 11:'Nov', 12:'Dec'}
+DATA_Month = {1: 'January', 2: 'February', 3: 'March', 4: 'April', 5: 'May', 6: 'June', 7: 'July', 8: 'August', 9: 'September', 10: 'October', 11: 'November', 12: 'December'
+# DATA_Day = [d[0:3] for d in cl.day_name]
+DATA_Day = cl.day_name
 
 def get_filters():
     """
@@ -33,67 +38,57 @@ def get_filters():
         "Please type city name or number:"
         usrcity = input(msg)
         
-        if usrcity.isnumeric() and int(usrcity) in range(1,len(DATA_CITY)+1) or usrcity.title() in DATA_CITY.keys():
-            city = list(DATA_CITY.keys())[int(usrcity)-1].title() if usrcity.isnumeric() else usrcity.title() 
+        if usrcity.isnumeric() and int(usrcity) in range(1,len(DATA_CITY)) or usrcity.title() in DATA_CITY.keys():
+            city = list(DATA_CITY.keys())[int(usrcity)] if usrcity.isnumeric() else usrcity.title() 
             break
         else:
             print("Wrong city Entry. :(")
     
-    msg = "- You are choose {} city.".format(city)
+    msg = "- You are choose {} {}.".format(city.title() if city.lower()!="all" else city.lower(),"city" if city.lower()!="all" else "cities")
     print(msg)
-    print()
-    print()
+    
     # get user input for month (all, january, february, ... , june)
 
     while True:
-        allmonths=""
-        for x in DATA_Month:
-            allmonths += "[{}]: {}{}".format(DATA_Month.index(x)+1,x,"\t" if DATA_Month.index(x)!=5 else "\n")
-
-        msg = "Choose month:\n[0]: All\t{}\nPlease type month name or number:".format(allmonths)
-       
+        msg = "Choose month:\n" \
+        "[0]: All\n" \
+        "[?]: Month Number\n" \
+        "Please type month name or number:"
         usrmonth = input(msg)
 
-        if usrmonth[:3].lower()=='all' or usrmonth.strip()=='0':
-            month = 'all'
-            break
-        elif usrmonth.isnumeric() and int(usrmonth) in range(len(DATA_Month)+1) or usrmonth.title() in DATA_Month or usrmonth[:3].title() in [m[0:3] for m in DATA_Month]:
-            month =DATA_Month[int(usrmonth)-1] if usrmonth.isnumeric() else list(m for m in DATA_Month if m[0:3] == usrmonth[:3].title())[0]
+        if usrmonth.isnumeric() and int(usrmonth) in range(len(DATA_Month)) or usrmonth[:3].title() in DATA_Month.values():
+            month = list(DATA_Month.values())[int(usrmonth)] if usrmonth.isnumeric() else usrmonth[:3].title() 
             break
         else:
             print("Wrong month Entry. :(")
 
-    msg = "- You are choose {} {}.".format(month,"month only" if month.lower() !="all" else "available monthes")
+    msg = "- You are choose {} {}.".format(month.lower(),"month" if month.lower() !="all" else "available monthes")
     print(msg)
-    print()
-    print()
+
     # get user input for day of week (all, monday, tuesday, ... sunday)
 
     while True:
-        alldays=""
-        for x in DATA_Day:
-            alldays += "[{}]: {}{}".format(DATA_Day.index(x)+1,x,"\t" if DATA_Day.index(x)!=2 else "\n")
-
-        msg = "Choose day:\n[0]: All\t{}\nPlease type week day name or number:".format(alldays)
-        
+        msg = "Choose day:\n" \
+        "[0]: All\n" \
+        "[?]: Day Name\n" \
+        "Please type week day name or number:"
         usrday = input(msg)
 
-        if usrday[:3].lower()=='all' or usrday.strip()=='0':
-            day = 'all'
-            break
-        elif usrday.isnumeric() and int(usrday) in range(len(DATA_Day)+1) or usrday.title() in DATA_Day or usrday[:3].title() in [d[0:3] for d in DATA_Day]:
-            day =DATA_Day[int(usrday)-1] if usrday.isnumeric() else list(d for d in DATA_Day if d[0:3] == usrday[:3].title())[0]
+        if usrday.isnumeric() and int(usrday) in range(len(DATA_Day)) or usrday[:3].title() in DATA_Day:
+            day = DATA_Day[int(usrday)] if usrday.isnumeric() else usrday[:3].title() 
             break
         else:
-            print("Wrong month Entry. :(")
-    
-    msg = "- You are choose {} {}.".format(day,"only" if day.lower() !="all" else "week days")
+            print("Wrong day Entry. :(")
 
+    msg = "- You are choose {}{}.".format(day.lower(),"day" if day.lower()!="all" else " available days")
     print(msg)
 
+    
     print('-'*40)
     
     return city, month, day
+
+
 
 
 def load_data(city, month, day):
@@ -108,17 +103,19 @@ def load_data(city, month, day):
         df - Pandas DataFrame containing city data filtered by month and day
     """
     # Read data from csv file that represent the city 
-    print("Loading {} city database in {} and {}.".format(city,month if month.lower()!="all" else "all monthes",day + " only" if day.lower()!="all" else "all week days"),end="")
+    print("Loading {} city database to view {} month(s) and {} day(s).".format(city,month.lower(),day),end="")
+
     
-    df = pd.read_csv("{}/{}".format(os.getcwd(),DATA_CITY[city]),parse_dates=['Start Time','End Time'])
+    df = pd.read_csv("{}\\bikeshare-2\\{}".format(os.getcwd(),DATA_CITY['Chicago']),parse_dates=['Start Time','End Time'])
     print(".",end="")
-    df['Month'] = df['Start Time'].dt.month_name()
+    df['Month'] = [m[0:3] for m in df['Start Time'].dt.month_name()]
     print(".",end="")
-    df['Day'] = df['Start Time'].dt.day_name()
+    df['Day'] = [d[0:3] for d in df['Start Time'].dt.day_name()]
     print(".",end="")
     df['Start Hour'] = df['Start Time'].dt.hour
     print(".",end="")
     df['Trip from to'] = df['Start Station'] +" -> " + df['End Station']
+
 
     # Load Special
     df = df[(df.Day == (df.Day if day.lower()== 'all' else day)) & (df.Month == (df.Month if month.lower()=="all" else month))]    
@@ -144,6 +141,8 @@ def time_stats(df):
 
     print("\nThis took %s seconds." % (time.time() - start_time))
     print('-'*40)
+
+
 
 def station_stats(df):
     """Displays statistics on the most popular stations and trip."""
@@ -171,11 +170,11 @@ def trip_duration_stats(df):
     start_time = time.time()
 
     # display total travel time
-    print("The total travel time: {}".format(df['Trip Duration'].sum()))
+    print("The total travel time: {}.".format(df['Trip Duration'].sum()))
 
 
     # display mean travel time
-    print("The mean travel time: {}".format(df['Trip Duration'].mean()))
+    print("The mean travel time: {}.".format(df['Trip Duration'].mean()))
 
     print("\nThis took %s seconds." % (time.time() - start_time))
     print('-'*40)
@@ -226,8 +225,9 @@ def user_stats(df):
 
 def main():
     while True:
+        get_filters = ('new york', 'dec', 'Sat')
         
-        city, month, day = get_filters()
+        city, month, day = get_filters
         
         df = load_data(city, month, day)
         time_stats(df)
